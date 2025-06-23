@@ -1,81 +1,59 @@
 'use client';
 
 import { useState } from 'react';
-import { getDayTrendingMovies } from '../../lib/tmdb/movies';
 
-export default function TopMoviesPage() {
-  const [loading, setLoading] = useState(false);
-  const [movies, setMovies] = useState<any[]>([]);
+type Status = 'idle' | 'loading' | 'ok' | 'error';
 
-  const handleShowTop3 = async () => {
-    setLoading(true);
+export default function Home() {
+  const [status, setStatus] = useState<Status>('idle');
+  const [count, setCount] = useState<number | null>(null);
+
+  const fetchData = async (endpoint: string) => {
+    setStatus('loading');
     try {
-      const data = await getDayTrendingMovies();
-      setMovies(data.results.slice(0, 3));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleShowAll = async () => {
-    setLoading(true);
-    try {
-      const data = await getDayTrendingMovies();
-      setMovies(data.results);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+      const res = await fetch(endpoint, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus('ok');
+        setCount(data.count ?? null);
+      } else {
+        setStatus('error');
+        setCount(null);
+      }
+    } catch {
+      setStatus('error');
+      setCount(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center">
-      <h1 className="text-3xl font-bold text-white mb-8">Top Movies</h1>
-      <div className="flex flex-col gap-6 w-full max-w-xs mb-8">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black">
+      <div className="flex flex-col gap-6">
         <button
-          className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-          onClick={handleShowTop3}
-          disabled={loading}
+          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+          onClick={() => fetchData('/api/getTrendingMovies')}
+          disabled={status === 'loading'}
         >
-          {loading ? 'Cargando...' : 'Mostrar Top 3'}
+          {status === 'loading' ? 'Cargando...' : 'Get Trending Movies'}
         </button>
         <button
-          className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-          onClick={handleShowAll}
-          disabled={loading}
+          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+          onClick={() => fetchData('/api/getTopRatedMovies')}
+          disabled={status === 'loading'}
         >
-          {loading ? 'Cargando...' : 'Mostrar Todas'}
+          {status === 'loading' ? 'Cargando...' : 'Get Top Rated Movies'}
         </button>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="bg-zinc-900 rounded-lg overflow-hidden shadow-lg flex flex-col items-center w-64"
-          >
-            <img
-              src={
-                movie.poster_path
-                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                  : '/no-image.png'
-              }
-              alt={movie.title}
-              className="w-full h-80 object-cover"
-            />
-            <div className="p-4 w-full flex flex-col items-center">
-              <h2 className="text-lg font-semibold text-white text-center">{movie.title}</h2>
-              <p className="text-zinc-400 text-sm mt-2">
-                Estreno: {movie.release_date}
-              </p>
-              <p className="text-yellow-400 font-bold mt-1">
-                ⭐ {movie.vote_average}
-              </p>
-            </div>
-          </div>
-        ))}
+        <button
+          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
+          onClick={() => fetchData('/api/getMoviesGenres')}
+          disabled={status === 'loading'}
+        >
+          {status === 'loading' ? 'Cargando...' : 'Get Movie Genres'}
+        </button>
+        {status === 'ok' && count !== null && (
+          <p className="text-teal-600">¡Películas guardadas! ({count})</p>
+        )}
+        {status === 'error' && <p className="text-red-400">Error al guardar películas.</p>}
       </div>
     </div>
   );

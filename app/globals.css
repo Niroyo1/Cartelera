@@ -5,6 +5,11 @@
   --foreground: #171717;
 }
 
+@theme {
+  --color-Tan: #D6BD98;
+  --color-WhiteSmoke: #F5F5F5;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -19,8 +24,30 @@
   }
 }
 
+@layer utilities {
+  .textDegraded {
+    @apply bg-gradient-to-t from-teal-400 to-white bg-clip-text text-transparent;
+  }
+
+  .hover\:textDegraded:hover {
+    @apply bg-gradient-to-t from-teal-400 to-white bg-clip-text text-transparent;
+  }
+
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.fade-top-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+

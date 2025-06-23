@@ -1,23 +1,23 @@
-import { auth } from './auth';
+import { Movie } from '../../types/movie';
+import { MovieGenre } from '../../types/movieGenre';
 
-export const getDayTrendingMovies = async () => {
-  await auth();
+export function parseMoviesResponse(apiResponse: any): Movie[] {
 
-  const url =
-    process.env.TMDB_TRENDING_DAILY_MOVIES_URL ||
-    'https://api.themoviedb.org/3/trending/movie/day';
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: 'Bearer ' + process.env.TMDB_API_KEY
-    },
-  };
+  return (apiResponse.results || []).map((movie: any) => ({
+    tmdb_id: movie.id,
+    title: movie.title,
+    poster_path: movie.poster_path,
+    release_date: movie.release_date,
+    vote_average: movie.vote_average,
+    overview: movie.overview,
+    backdrop_path: movie.backdrop_path,
+    genre_ids: movie.genre_ids,
+  }));
+}
 
-  return fetch(url, options)
-    .then((res) => res.json())
-    .catch((err) => {
-      console.error('Error fetching trending movies:', err);
-      throw err;
-    });
+export function parseGenresResponse(apiResponse: any): MovieGenre[] {
+  return (apiResponse.genres || []).map((genre: any) => ({
+    tmdb_id: genre.id,
+    name: genre.name,
+  }));
 }
