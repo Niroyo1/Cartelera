@@ -31,8 +31,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
   }
 
   return (
-    <div className='bg-gradient-to-b from-black via-black to-teal-950 min-h-screen'>
-      <div className="h-50 w-full bg-black"/>
+    <div className='bg-black min-h-screen mt-50 w-full'>
       <div className="relative -top-28 mx-34 flex flex-col md:flex-row items-start gap-20">
         <img
           className="block w-84 aspect-[2/3] rounded-lg object-cover fade-top-bottom"
@@ -40,19 +39,21 @@ export default async function MoviePage({ params }: MoviePageProps) {
           alt={movie.title}
         />
         <div>
-          <h1 className="text-9xl font-extrabold text-teal-400 drop-shadow-lg">{movie.title}</h1>
-          <p className="text-WhiteSmoke text-base mb-1">
+          <h1 className="text-9xl font-extrabold textDegraded drop-shadow-lg">{movie.title}</h1>
+          <p className="text-white text-base mb-1">
             Release date: {movie.release_date}
           </p>
 
           {movie.genres.length > 0 && (
-            <div className="flex flex-wrap gap-2 my-4">
+          <div className="flex flex-wrap gap-2 my-4">
               {movie.genres.map((genre) => (
                 <div
                   key={genre.id}
-                  className="bg-teal-400 rounded px-3 py-1 text-black font-semibold inline-block"
+                  className="p-[2px] bg-gradient-to-t from-Lavender to-NeonBlue rounded inline-block"
                 >
-                  {genre.name}
+                  <div className="bg-black rounded px-3 py-1 text-white font-semibold">
+                    {genre.name}
+                  </div>
                 </div>
               ))}
             </div>
@@ -60,9 +61,9 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
           <div className="flex-1 my-6 flex flex-col items-start mr-80">
             <p className="font-bold flex items-center gap-2 px-2 mb-4 text-lg bg-Crimson rounded-lg">
-              <FaStar className="text-Tan" />
-              <span className="text-Tan font-bold">
-                {movie.vote_average !== 0 ? movie.vote_average : "-"}
+              <FaStar className="text-Lavender" />
+              <span className="text-Lavender font-bold">
+                {movie.vote_average !== 0 ? movie.vote_average?.toFixed(1) : "-"}
               </span>
             </p>
             {movie.overview && (

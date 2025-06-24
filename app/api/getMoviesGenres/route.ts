@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { parseGenresResponse } from '../../../lib/tmdb/movies';
 import { saveGenres } from '../../../lib/db/movies';
 
-export async function POST() {
+export async function GET() {
 
   const url =
     process.env.NEXT_PUBLIC_TMDB_MOVIES_GENRES_URL ||

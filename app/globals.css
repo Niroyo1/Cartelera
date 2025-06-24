@@ -8,6 +8,9 @@
 @theme {
   --color-Tan: #D6BD98;
   --color-WhiteSmoke: #F5F5F5;
+  --color-Lavender: #B381FB;
+  --color-NeonBlue: #5D6FF1;
+  --color-Night: #111111;
 }
 
 @theme inline {
@@ -26,11 +29,11 @@
 
 @layer utilities {
   .textDegraded {
-    @apply bg-gradient-to-t from-teal-400 to-white bg-clip-text text-transparent;
+    @apply bg-gradient-to-t from-[#B381FB] to-[#5D6FF1] bg-clip-text text-transparent;
   }
 
   .hover\:textDegraded:hover {
-    @apply bg-gradient-to-t from-teal-400 to-white bg-clip-text text-transparent;
+    @apply bg-gradient-to-t from-[#B381FB] to-[#5D6FF1] bg-clip-text text-transparent;
   }
 
 }
@@ -50,4 +53,7 @@ body {
   mask-size: 100% 100%;
 }
 
+.degradedContainer {
+  @apply p-[2px] rounded bg-gradient-to-t from-Lavender to-NeonBlue;
+}
 

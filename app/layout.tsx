@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${oswald.className} antialiased`}>
-        <div className="min-h-screen flex flex-col pt-16">
+        <div className="min-h-screen flex flex-col pt-16 bg-black">
           <Header />
           <main className="flex-1">{children}</main>
         </div>

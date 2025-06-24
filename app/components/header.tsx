@@ -63,12 +63,12 @@ export default function Header() {
           })}
         </nav>
 
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="Search..."
-          className="px-4 py-2 rounded-lg bg-WhiteSmoke text-black placeholder-zinc-800 focus:outline-none w-72"
-        />
+        <div className="degradedContainer">
+          <input
+            type="text"
+            className="px-4 py-2 rounded bg-Night text-WhiteSmoke focus:outline-none w-72"
+          />
+        </div> 
       </div>
     </header>
   );

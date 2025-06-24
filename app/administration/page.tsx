@@ -4,56 +4,104 @@ import { useState } from 'react';
 
 type Status = 'idle' | 'loading' | 'ok' | 'error';
 
+interface EndpointConfig {
+  label: string;
+  endpoint: string;
+  params?: {
+    name: string;
+    label: string;
+    default: string;
+  }[];
+}
+
+const endpoints: EndpointConfig[] = [
+  {
+    label: 'Get Trending Movies',
+    endpoint: '/api/getTrendingMovies',
+  },
+  {
+    label: 'Get Top Rated Movies',
+    endpoint: '/api/getTopRatedMovies',
+    params: [
+      {
+        name: 'page',
+        label: 'Page',
+        default: '1',
+      },
+    ],
+  },
+  {
+    label: 'Get Movie Genres',
+    endpoint: '/api/getMoviesGenres',
+  },
+];
+
 export default function Home() {
   const [status, setStatus] = useState<Status>('idle');
-  const [count, setCount] = useState<number | null>(null);
+  const [paramValues, setParamValues] = useState<Record<string, string>>({});
+  const [activeLabel, setActiveLabel] = useState<string | null>(null);
 
-  const fetchData = async (endpoint: string) => {
+  const handleChange = (name: string, value: string) => {
+    setParamValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const fetchData = async (config: EndpointConfig) => {
     setStatus('loading');
+    setActiveLabel(config.label);
+
+    const params = config.params?.map(({ name }) => {
+      const val = paramValues[name] || '1';
+      return `${name}=${val}`;
+    });
+
+    const url = `${config.endpoint}${params && params.length > 0 ? `?${params.join('&')}` : ''}`;
+
     try {
-      const res = await fetch(endpoint, { method: 'POST' });
+      const res = await fetch(url);
       const data = await res.json();
+
       if (data.ok) {
         setStatus('ok');
-        setCount(data.count ?? null);
       } else {
         setStatus('error');
-        setCount(null);
       }
-    } catch {
+    } catch (e) {
+      console.error('Error fetching data:', e);
       setStatus('error');
-      setCount(null);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black">
       <div className="flex flex-col gap-6">
-        <button
-          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-          onClick={() => fetchData('/api/getTrendingMovies')}
-          disabled={status === 'loading'}
-        >
-          {status === 'loading' ? 'Cargando...' : 'Get Trending Movies'}
-        </button>
-        <button
-          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-          onClick={() => fetchData('/api/getTopRatedMovies')}
-          disabled={status === 'loading'}
-        >
-          {status === 'loading' ? 'Cargando...' : 'Get Top Rated Movies'}
-        </button>
-        <button
-          className="bg-WhiteSmoke text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-          onClick={() => fetchData('/api/getMoviesGenres')}
-          disabled={status === 'loading'}
-        >
-          {status === 'loading' ? 'Cargando...' : 'Get Movie Genres'}
-        </button>
-        {status === 'ok' && count !== null && (
-          <p className="text-teal-600">¡Películas guardadas! ({count})</p>
-        )}
-        {status === 'error' && <p className="text-red-400">Error al guardar películas.</p>}
+        {endpoints.map((config) => (
+          <div key={config.label} className="flex items-center gap-4">
+            <div className='degradedContainer'>
+              <button
+                className="bg-black px-8 py-3 rounded font-semibold hover:bg-gray-900 transition"
+                onClick={() => fetchData(config)}
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' && activeLabel === config.label
+                  ? 'Cargando...'
+                  : config.label}
+              </button>
+            </div>
+            {config.params?.map((param) => (
+              <input
+                key={param.name}
+                type="number"
+                min={1}
+                className="w-22 px-2 py-3 rounded bg-Night text-whiteSmoke border border-gray-700"
+                placeholder={param.label}
+                value={paramValues[param.name] || param.default}
+                onChange={(e) => handleChange(param.name, e.target.value)}
+              />
+            ))}
+          </div>
+        ))}
+        {status === 'ok' && <p className="text-NeonBlue">¡Success!</p>}
+        {status === 'error' && <p className="text-red-400">Internal Error.</p>}
       </div>
     </div>
   );
