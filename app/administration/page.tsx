@@ -34,6 +34,25 @@ const endpoints: EndpointConfig[] = [
     label: 'Get Movie Genres',
     endpoint: '/api/getMoviesGenres',
   },
+  {
+    label: 'Get Trending Shows',
+    endpoint: '/api/getTrendingShows',
+  },
+  {
+    label: 'Get Top Rated Shows',
+    endpoint: '/api/getTopRatedShows',
+    params: [
+      {
+        name: 'page',
+        label: 'Page',
+        default: '1',
+      },
+    ],
+  },
+  {
+    label: 'Get Show Genres',
+    endpoint: '/api/getShowsGenres',
+  },
 ];
 
 export default function Home() {

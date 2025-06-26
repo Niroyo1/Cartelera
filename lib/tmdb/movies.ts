@@ -10,7 +10,6 @@ export function parseMoviesResponse(apiResponse: any): Movie[] {
     release_date: movie.release_date,
     vote_average: movie.vote_average,
     overview: movie.overview,
-    backdrop_path: movie.backdrop_path,
     genre_ids: movie.genre_ids,
   }));
 }

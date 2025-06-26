@@ -1,11 +1,11 @@
 import { prisma } from '../../../lib/db/prisma';
 import { FaStar } from "react-icons/fa";
 
-interface MoviePageProps {
+interface ShowPageProps {
   params: { id: string };
 }
 
-export default async function MoviePage({ params }: MoviePageProps) {
+export default async function ShowPage({ params }: ShowPageProps) {
   const id = params.id;
   if (!id) {
     return (
@@ -15,14 +15,14 @@ export default async function MoviePage({ params }: MoviePageProps) {
     );
   }
 
-  const movie = await prisma.movie.findUnique({
+  const show = await prisma.show.findUnique({
     where: { id: Number(id) },
     include: {
       genres: true,
     },
   });
 
-  if (!movie) {
+  if (!show) {
     return (
       <div className="text-white p-8">
         <h2>Not found.</h2>
@@ -35,18 +35,15 @@ export default async function MoviePage({ params }: MoviePageProps) {
       <div className="relative mt-10 mx-40 flex flex-col md:flex-row items-start gap-20">
         <img
           className="block w-84 aspect-[2/3] rounded-lg object-cover fade-top-bottom"
-          src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-image.png'}
-          alt={movie.title}
+          src={show.poster_path ? `https://image.tmdb.org/t/p/w500${show.poster_path}` : '/no-image.png'}
+          alt={show.name}
         />
         <div>
-          <h1 className="text-9xl font-extrabold textDegraded drop-shadow-lg">{movie.title}</h1>
-          <p className="text-white text-base mb-1">
-            Release date: {movie.release_date}
-          </p>
+          <h1 className="text-9xl font-extrabold textDegraded drop-shadow-lg">{show.name}</h1>
 
-          {movie.genres.length > 0 && (
+          {show.genres.length > 0 && (
           <div className="flex flex-wrap gap-2 my-4">
-              {movie.genres.map((genre) => (
+              {show.genres.map((genre) => (
                 <div
                   key={genre.id}
                   className="p-[2px] bg-gradient-to-t from-Lavender to-NeonBlue rounded inline-block"
@@ -63,11 +60,11 @@ export default async function MoviePage({ params }: MoviePageProps) {
             <p className="font-bold flex items-center gap-2 px-2 mb-4 text-lg bg-Crimson rounded-lg">
               <FaStar className="text-Lavender" />
               <span className="text-Lavender font-bold">
-                {movie.vote_average !== 0 ? movie.vote_average?.toFixed(1) : "-"}
+                {show.vote_average !== 0 ? show.vote_average?.toFixed(1) : "-"}
               </span>
             </p>
-            {movie.overview && (
-              <p className="text-WhiteSmoke italic text-xl pl-4">{movie.overview}</p>
+            {show.overview && (
+              <p className="text-WhiteSmoke italic text-xl pl-4">{show.overview}</p>
             )}
           </div>
         </div>

@@ -16,7 +16,6 @@ export async function saveMovies(movies: Movie[]) {
           overview: movie.overview,
           release_date: movie.release_date,
           title: movie.title,
-          trending: movie.trending ?? false,
           genres: {
             set: [],
             connect: genresToConnect,
@@ -29,7 +28,6 @@ export async function saveMovies(movies: Movie[]) {
           release_date: movie.release_date,
           vote_average: movie.vote_average,
           overview: movie.overview,
-          trending: movie.trending ?? false,
           genres: {
             connect: genresToConnect,
           },

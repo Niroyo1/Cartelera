@@ -4,24 +4,21 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaStar, FaChevronDown } from 'react-icons/fa';
-import { Movie } from "../../types/movie";
+import { Show } from "../../types/show";
 
-export default function MoviesPage({
-  initialMovies = [],
+export default function ShowsPage({
+  initialShows = [],
 }: {
-  initialMovies?: Movie[];
+  initialShows?: Show[];
 }) {
-  const [movies, setMovies] = useState<Movie[]>(initialMovies);
+  const [shows, setShows] = useState<Show[]>(initialShows);
   const [loading, setLoading] = useState(false);
-  const [years, setYears] = useState<number[]>([]);
   const [genres, setGenres] = useState<{ id: string; name: string }[]>([]);
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const year = searchParams.get('year') || '';
   const genre = searchParams.get('genre') || '';
-  const order = searchParams.get('order') || 'date';
   const page = parseInt(searchParams.get('page') || '1');
 
   const updateFilter = (key: string, value: string) => {
@@ -34,15 +31,14 @@ export default function MoviesPage({
     if (key !== 'page') {
       params.set('page', '1');
     }
-    router.push(`/movies?${params.toString()}`);
+    router.push(`/shows?${params.toString()}`);
   };
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const res = await fetch('/api/moviesFilters');
+        const res = await fetch('/api/showsFilters');
         const data = await res.json();
-        setYears(data.years);
         setGenres(data.genres);
       } catch (error) {
         console.error('Error fetching filters:', error);
@@ -52,48 +48,25 @@ export default function MoviesPage({
   }, []);
 
   useEffect(() => {
-    const fetchFilteredMovies = async () => {
+    const fetchFilteredShows = async () => {
       setLoading(true);
       const query = new URLSearchParams({
-        year,
         genre,
-        order,
         page: page.toString(),
       }).toString();
 
-      const res = await fetch(`/api/movies?${query}`);
+      const res = await fetch(`/api/shows?${query}`);
       const data = await res.json();
-      setMovies(data);
+      setShows(data);
       setLoading(false);
     };
 
-    fetchFilteredMovies();
-  }, [year, genre, order, page]);
+    fetchFilteredShows();
+  }, [ genre, page]);
 
   return (
     <div className="p-8 min-h-screen bg-gradient-to-b from-Night to-black">
       <div className="flex gap-4 mb-8 mx-40 items-center flex-wrap">
-        {/* Year */}
-        <div className="relative degradedContainer">
-          <div className="relative">
-            <select
-              value={year}
-              onChange={(e) => updateFilter('year', e.target.value)}
-              className="appearance-none bg-black text-white px-4 py-2 pr-10 w-full rounded focus:outline-none focus:ring-0"
-            >
-              <option value="">Year</option>
-              {Array.isArray(years) &&
-                years.map((y) => (
-                  <option key={y} value={y}>
-                    {y % 10 === 0 && y !== new Date().getFullYear()
-                      ? `${y}s`
-                      : y}
-                  </option>
-                ))}
-            </select>
-            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none text-sm" />
-          </div>
-        </div>
 
         {/* Genre */}
         <div className="relative degradedContainer">
@@ -115,31 +88,17 @@ export default function MoviesPage({
           </div>
         </div>
 
-        {/* Order */}
-        <div className="relative degradedContainer">
-          <div className="relative">
-            <select
-              value={order}
-              onChange={(e) => updateFilter('order', e.target.value)}
-              className="appearance-none bg-black text-white px-4 py-2 pr-10 w-full rounded focus:outline-none focus:ring-0"
-            >
-              <option value="date">Date</option>
-              <option value="top">Rate</option>
-            </select>
-            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none text-sm" />
-          </div>
-        </div>
       </div>
 
       {loading ? (
         <p className="text-center">Loading...</p>
-      ) : Array.isArray(movies) && movies.length > 0 ? (
+      ) : Array.isArray(shows) && shows.length > 0 ? (
         <>
           <div className="grid mx-40 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-8 gap-6">
-            {movies.map((movie) => (
+            {shows.map((show) => (
               <Link
-                key={movie.id}
-                href={`/movies/${movie.id}`}
+                key={show.id}
+                href={`/shows/${show.id}`}
                 className="group inline-block transition-all duration-200 hover:scale-105 rounded-lg overflow-hidden"
               >
                 <div className="relative p-[2px] rounded-lg bg-transparent group-hover:bg-gradient-to-t group-hover:from-[#B381FB] group-hover:to-[#5D6FF1] transition-all duration-200">
@@ -147,17 +106,17 @@ export default function MoviesPage({
                     <div className="w-full aspect-[2/3] bg-black">
                       <img
                         src={
-                          movie.poster_path
-                            ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                          show.poster_path
+                            ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
                             : '/no-image.png'
                         }
-                        alt={movie.title}
+                        alt={show.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="absolute top-1 right-2 opacity-0 group-hover:opacity-100 bg-black bg-opacity-70 px-2 py-1 rounded text-white font-semibold flex items-center gap-1">
                       <FaStar className="text-Lavender" />
-                      {movie.vote_average === 0 ? '-' : movie.vote_average.toFixed(1)}
+                      {show.vote_average === 0 ? '-' : show.vote_average.toFixed(1)}
                     </div>
                   </div>
                 </div>
@@ -180,7 +139,7 @@ export default function MoviesPage({
             <span className="text-white font-semibold text-lg">Page {page}</span>
 
             {/* Next */}
-            <div className={`degradedContainer ${movies.length < 80 ? 'opacity-40 pointer-events-none' : ''}`}>
+            <div className={`degradedContainer ${shows.length < 80 ? 'opacity-40 pointer-events-none' : ''}`}>
               <button
                 onClick={() => updateFilter('page', (page + 1).toString())}
                 className="w-40 h-full rounded px-4 py-2 bg-Night text-white transition-all duration-200 hover:bg-gradient-to-t hover:from-Night hover:to-[#14193d]"
@@ -191,7 +150,7 @@ export default function MoviesPage({
           </div>
         </>
       ) : (
-        <p className="text-center text-white">No movies found.</p>
+        <p className="text-center text-white">No TV shows found.</p>
       )}
     </div>
   );

@@ -15,13 +15,30 @@ model Movie {
   release_date String?
   overview     String?
   vote_average Float?
-  trending     Boolean       @default(false)
-  genres       MovieGenre[]  @relation("MovieGenresOnMovies")
+  genres       MovieGenre[]  @relation("MovieGenres")
 }
 
 model MovieGenre {
   id      Int      @id @default(autoincrement())
   tmdb_id Int      @unique
   name    String
-  movies  Movie[]  @relation("MovieGenresOnMovies")
+  movies  Movie[]  @relation("MovieGenres")
+}
+
+model Show {
+  id           Int           @id @default(autoincrement())
+  tmdb_id      Int           @unique
+  name        String
+  poster_path  String?
+  release_date String?
+  overview     String?
+  vote_average Float?
+  genres       ShowGenre[]  @relation("ShowGenres")
+}
+
+model ShowGenre {
+  id      Int      @id @default(autoincrement())
+  tmdb_id Int      @unique
+  name    String
+  shows   Show[]  @relation("ShowGenres")
 }

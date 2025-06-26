@@ -2,7 +2,6 @@ import { prisma } from '../../../lib/db/prisma';
 
 export async function GET() {
   try {
-    // Obtener años únicos ordenados descendente
     const currentYear = new Date().getFullYear();
 
     const yearsRaw = await prisma.movie.findMany({
@@ -22,10 +21,8 @@ export async function GET() {
     });
     const allYears = Array.from(allYearsSet).sort((a, b) => b - a);
 
-    // Detectar si hay películas este año
     const hasCurrentYear = allYears.includes(currentYear);
 
-    // Agregar año actual si aplica, luego décadas únicas
     const years: number[] = [];
 
     if (hasCurrentYear) {
@@ -42,7 +39,6 @@ export async function GET() {
 
     years.push(...Array.from(decadesSet).sort((a, b) => b - a));
 
-    // Obtener géneros ordenados alfabéticamente
     const genres = await prisma.movieGenre.findMany({
       select: {
         id: true,

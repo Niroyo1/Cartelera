@@ -2,9 +2,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import SearchBar from "./searchBar";
 
 const navItems = [
   { href: "/movies", label: "MOVIES" },
+  { href: "/shows", label: "TV SHOWS" },
   { href: "/administration", label: "ADMIN" },
 ];
 
@@ -40,7 +42,7 @@ export default function Header() {
         transform: show ? "translateY(0)" : "translateY(-100%)",
       }}
     >
-      <div className="mx-32 flex items-center justify-between h-16">
+      <div className="mx-48 flex items-center justify-between h-16">
         {/* Título */}
         <h1 className="font-extrabold textDegraded text-xl">MiCartelera</h1>
 
@@ -64,11 +66,8 @@ export default function Header() {
         </nav>
 
         <div className="degradedContainer">
-          <input
-            type="text"
-            className="px-4 py-2 rounded bg-Night text-WhiteSmoke focus:outline-none w-72"
-          />
-        </div> 
+          <SearchBar />
+        </div>  
       </div>
     </header>
   );
